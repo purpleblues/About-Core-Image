@@ -1,4 +1,4 @@
-#Creating Custom Filters
+# Creating Custom Filters
 
 If the filters provided by Core Image don’t provide the functionality you need, you can write your own filter. You can include a filter as part of an application project, or (in macOS only) you can package one or more filters as a standalone image unit. Image units use the NSBundle class and allow an app to host external plug-in filters.
 
@@ -11,11 +11,11 @@ The following sections provide detailed information on how to create and use cus
 * Writing Nonexecutable Filters is a must-read section for anyone who plans to write a filter that is CPU nonexecutable, as it lists the requirements for such filters. An image unit can contain both kinds of filters. CPU nonexecutable filters are secure because they cannot harbor viruses and Trojan horses. Filter clients who are security conscious may want to use only those filters that are CPU nonexecutable.
 * Kernel Routine Examples provides kernel routines for three sample filters: brightening, multiply, and hole distortion.
 
-##1、Expressing Image Processing Operations in Core Image
+## 1、Expressing Image Processing Operations in Core Image
 
 Core Image works such that a kernel (that is, a per-pixel processing routine) is written as a computation where an output pixel is expressed using an inverse mapping back to the corresponding pixels of the kernel’s input images. Although you can express most pixel computations this way—some more naturally than others—there are some image processing operations for which this is difficult, if not impossible. Before you write a filter, you may want to consider whether the image processing operation can be expressed in Core Image. For example, computing a histogram is difficult to describe as an inverse mapping to the source image.
 
-##2、Creating a Custom Filter
+## 2、Creating a Custom Filter
 
 This section shows how to create a Core Image filter that has an Objective-C portion and a kernel portion. By following the steps in this section, you’ll create a filter that is CPU executable. You can package this filter, along with other filters if you’d like, as an image unit by following the instructions in Packaging and Loading Image Units. Or, you can simply use the filter from within your own app. See Using Your Own Custom Filter for details.
 
@@ -43,7 +43,7 @@ Each step is described in detail in the sections that follow using a haze remova
 
 
 
-###1. Write the Kernel Code
+### 1. Write the Kernel Code
 The code that performs per-pixel processing resides in a file with the .cikernel extension. You can include more than one kernel routine in this file. You can also include other routines if you want to make your code modular. You specify a kernel using a subset of OpenGL Shading Language (glslang) and the Core Image extensions to it. See Core Image Kernel Language Reference for information on allowable elements of the language.
 
 A kernel routine signature must return a vector (vec4) that contains the result of mapping the source pixel to a destination pixel. Core Image invokes a kernel routine once for each pixel. Keep in mind that your code can’t accumulate knowledge from pixel to pixel. A good strategy when writing your code is to move as much invariant calculation as possible from the actual kernel and place it in the Objective-C portion of the filter.
@@ -79,7 +79,7 @@ Here’s what the code does:
 
 >A few words about samplers and sample coordinate space: The samplers you set up for providing samples to custom kernels can contain any values necessary for the filter calculation, not just color values. For example, a sampler can provide values from numerical tables, vector fields in which the x and y values are represented by the red and green components respectively, height fields, and so forth. This means that you can store any vector-value field with up to four components in a sampler. To avoid confusion on the part of the filter client, it’s best to provide documentation that states when a vector is not used for color. When you use a sampler that doesn’t provide color, you can bypass the color correction that Core Image usually performs by providing a nil colorspace.
 
-###2. se Quartz Composer to Test the Kernel Routine
+### 2. se Quartz Composer to Test the Kernel Routine
 
 Quartz Composer is an easy-to-use development tool that you can use to test kernel routines.
 
@@ -108,7 +108,7 @@ The composition you build to test your kernel can be more complex than that show
 
 ![MacDown logo](https://developer.apple.com/library/prerelease/content/documentation/GraphicsImaging/Conceptual/CoreImaging/art/qc_kernel_patch_2x.png)
 
-###3. Declare an Interface for the Filter
+### 3. Declare an Interface for the Filter
 The .h file for the filter contains the interface that specifies the filter inputs, as shown in Listing 9-2. The haze removal kernel has four input parameters: a source, color, distance, and slope. The interface for the filter must also contain these input parameters. The input parameters must be in the same order as specified for the filter, and the data types must be compatible between the two.
 
 >Note: Make sure to prefix the names of input parameters with input as shown in Listing 9-2.
@@ -127,7 +127,7 @@ The .h file for the filter contains the interface that specifies the filter inpu
 @end
 ```
 
-###4. Write an Init Method for the CIKernel Object
+### 4. Write an Init Method for the CIKernel Object
 
 The implementation file for the filter contains a method that initializes a Core Image kernel object (CIKernel) with the kernel routine specified in the .cikernel file. A .cikernel file can contain more than one kernel routine. A detailed explanation for each numbered line of code appears following the listing.
 
@@ -159,7 +159,7 @@ Here’s what the code does:
 4. Creates a CIKernel object from the string specified by the code argument. Each routine in the .cikernel file that is marked as a kernel is returned in the kernels array. This example has only one kernel in the .cikernel file, so the array contains only one item.
 5. Sets hazeRemovalKernel to the first kernel in the kernels array. If the .cikernel file contains more than one kernel, you would also initialize those kernels in this routine.
 
-###5. Write a Custom Attributes Method
+### 5. Write a Custom Attributes Method
 
 A customAttributes method allows clients of the filter to obtain the filter attributes such as the input parameters, default values, and minimum and maximum values. (See CIFilter Class Reference for a complete list of attributes.) A filter is not required to provide any information about an attribute other than its class, but a filter must behave in a reasonable manner if attributes are not present.
 
@@ -204,7 +204,7 @@ Listing 9-4 shows the customAttributes method for the Haze filter. The input par
 }
 ```
 
-###6. Write an Output Image Method
+### 6. Write an Output Image Method
 An outputImage method creates a CISampler object for each input image (or image mask), creates a CIFilterShape object (if appropriate), and applies the kernel method. Listing 9-5 shows an outputImage method for the haze removal filter. The first thing the code does is to set up a sampler to fetch pixels from the input image. Because this filter uses only one input image, the code sets up only one sampler.
 
 The code calls the apply:arguments:options: method of CIFilter to produce a CIImage object. The first parameter to the apply method is the CIKernel object that contains the haze removal kernel function. (See Write the Kernel Code.) Recall that the haze removal kernel function takes four arguments: a sampler, a color, a distance, and the slope. These arguments are passed as the next four parameters to the apply:arguments:options: method in Listing 9-5. The remaining arguments to the apply method specify options (key-value pairs) that control how Core Image should evaluate the function. You can pass one of three keys: kCIApplyOptionExtent, kCIApplyOptionDefinition, or kCIApplyOptionUserInfo. This example uses the kCIApplyOptionDefinition key to specify the domain of definition (DOD) of the output image. See CIFilter Class Reference for a description of these keys and for more information on using the apply:arguments:options: method.
@@ -225,7 +225,7 @@ The final argument nil, specifies the end of the options list.
 
 Listing 9-5 is a simple example. The implementation for your outputImage method needs to be tailored to your filter. If your filter requires loop-invariant calculations, you would include them in the outputImage method rather than in the kernel.
 
-###7. Register the Filter
+### 7. Register the Filter
 Ideally, you’ll package the filter as an image unit, regardless of whether you plan to distribute the filter to others or use it only in your own app. If you plan to package this filter as an image unit, you’ll register your filter using the CIPlugInRegistration protocol described in Packaging and Loading Image Units. You can skip the rest of this section.
 
 >Note: Packaging your custom filter as an image unit promotes modular programming and code maintainability.
@@ -251,7 +251,7 @@ The filter name is the string for creating the haze removal filter when you want
 }
 ```
 
-###8. Write a Method to Create Instances of the Filter
+### 8. Write a Method to Create Instances of the Filter
 If you plan to use this filter only in your own app, then you’ll need to implement a filterWithName: method as described in this section. If you plan to package this filter as an image unit for use by third-party developers, then you can skip this section because your packaged filters can use the filterWithName: method provided by the CIFilter class.
 
 The filterWithName: method shown in Listing 9-7 creates instances of the filter when they are requested.
@@ -269,7 +269,7 @@ The filterWithName: method shown in Listing 9-7 creates instances of the filter 
 
 After you follow these steps to create a filter, you can use the filter in your own app. See Using Your Own Custom Filter for details. If you want to make a filter or set of filters available as a plug-in for other apps, see Packaging and Loading Image Units.
 
-##3、Using Your Own Custom Filter
+## 3、Using Your Own Custom Filter
 
 The procedure for using your own custom filter is the same as the procedure for using any filter provided by Core Image except that you must initialize the filter class. You initialize the haze removal filter class created in the last section with this line of code:
 
@@ -312,7 +312,7 @@ Listing 9-8 shows how to use the haze removal filter. Note the similarity betwee
 }
 ```
 
-##4、Supplying an ROI Function
+## 4、Supplying an ROI Function
 
 The region of interest, or ROI, defines the area in the source from which a sampler takes pixel information to provide to the kernel for processing. Recall from the The Region of Interest discussion in Querying the System for Filters that the working space coordinates of the ROI and the DOD either coincide exactly, are dependent on one another, or not related. Core Image always assumes that the ROI and the DOD coincide. If that’s the case for the filter you write, then you don’t need to supply an ROI function. But if this assumption is not true for the filter you write, then you must supply an ROI function. Further, you can supply an ROI function only for CPU executable filters.
 
@@ -327,7 +327,7 @@ An ROI callback is a block or closure whose signature conforms to the CIKernelRO
 
 The next sections provide examples of ROI functions.
 
-###1. A Simple ROI Function
+### 1. A Simple ROI Function
 If your ROI function does not require data to be passed to it in the userInfo parameter, then you don’t need to include that argument, as shown in Listing 9-9. The code in Listing 9-9 outsets the sampler by one pixel, which is a calculation used by an edge-finding filter or any 3x3 convolution.
 
 **Listing 9-9  A simple ROI function**
@@ -340,7 +340,7 @@ CIKernelROICallback callback = ^(int index, CGRect rect) {
 
 Note that this function ignores the index value. If your kernel uses only one sampler, then you can ignore the index. If your kernel uses more than one sampler, you must make sure that you return the ROI that’s appropriate for the specified sampler. You’ll see how to do that in the sections that follow.
 
-###3. An ROI Function for a Glass Distortion Filter
+### 3. An ROI Function for a Glass Distortion Filter
 
 Listing 9-10 shows an ROI function for a glass distortion filter. This function returns an ROI for two samplers. Sampler 0 represents the image to distort and sampler 1 represents the texture used for the glass.
 
@@ -363,7 +363,7 @@ CIKernelROICallback distortionCallback = ^(int index, CGRect rect) {
 };
 ```
 
-###3. An ROI Function for an Environment Map
+### 3. An ROI Function for an Environment Map
 Listing 9-11 shows an ROI function that returns the ROI for a kernel that uses three samplers, one of which is an environment map. The ROI for sampler 0 and sampler 1 coincide with the DOD. For that reason, the code returns the destination rectangle passed to it for samplers other than sampler 2.
 
 Sampler 2 uses captured values that specify the size of the environment map to create the rectangle that specifies the region of interest.
@@ -380,7 +380,7 @@ CIKernelROICallback envMapROICallback = ^(int index, CGRect rect) {
 };
 ```
 
-###4. Specifying Sampler Order
+### 4. Specifying Sampler Order
 
 As you saw from the previous examples, a sampler has an index associated with it. When you supply an ROI function, Core Image passes a sampler index to you. A sampler index is assigned on the basis of its order when passed to the apply method for the filter. You call apply from within the filter’s outputImage routine, as shown in Listing 9-12.
 
@@ -430,7 +430,7 @@ Here’s what the code does:
 
 The order of the sampler arguments determine its index. The first sampler supplied to the kernel is index 0. In this case, that’s the src sampler. The second sampler supplied to the kernel—blur— is assigned index 1. The third sampler—env—is assigned index 2. It’s important to check your ROI function to make sure that you provide the appropriate ROI for each sampler.
 
-##5、Writing Nonexecutable Filters
+## 5、Writing Nonexecutable Filters
 
 A filter that is CPU nonexecutable is guaranteed to be secure. Because this type of filter runs only on the GPU, it cannot engage in virus or Trojan horse activity or other malicious behavior. To guarantee security, CPU nonexecutable filters have these restrictions:
 
@@ -516,7 +516,7 @@ When you write a nonexecutable filter, you need to provide all filter attributes
 ```
 
 
-##6、Kernel Routine Examples
+## 6、Kernel Routine Examples
 
 The essence of any image processing filter is the kernel that performs the pixel calculations. The code listings in this section show some typical kernel routines for these filters: brighten, multiply, and hole distortion. By looking at these you can get an idea of how to write your own kernel routine. Note, however, that these routines are examples. Don’t assume that the code shown here is what Core Image uses for the filters it supplies.
 
@@ -524,7 +524,7 @@ Before you write your own kernel routine, you may want to read Expressing Image 
 
 You can find in-depth information on writing kernels as well as more examples in Image Unit Tutorial.
 
-###1. Computing a Brightening Effect
+### 1. Computing a Brightening Effect
 **Listing 9-14 computes a brightening effect. A detailed explanation for each numbered line of code appears following the listing.**
 
 ```
@@ -543,7 +543,7 @@ Here’s what the code does:
 2. Adds a bias to the pixel value. The bias is k scaled by the alpha value of the pixel to make sure the pixel value is premultiplied.
 3. Returns the changed pixel.
 
-###2. Computing a Multiply Effect
+### 2. Computing a Multiply Effect
 Listing 9-15 shows a kernel routine that computes a multiply effect. The code looks up the source pixel in the sampler and then multiplies it by the value passed to the routine.
 
 **Listing 9-15  A kernel routine that computes a multiply effect**
@@ -556,7 +556,7 @@ kernel vec4 multiplyEffect (sampler src, __color mul)
 ```
 
  
-###3. Computing a Hole Distortion
+### 3. Computing a Hole Distortion
 Listing 9-16 shows a kernel routine that computes a hole distortion. Note that there are many ways to compute a hole distortion. A detailed explanation for each numbered line of code appears following the listing.
 
 **Listing 9-16  A kernel routine that computes a hole distortion**

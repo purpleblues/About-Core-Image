@@ -1,13 +1,13 @@
-#Processing Images
+# Processing Images
 
 Processing images means applying filters—an image filter is a piece of software that examines an input image pixel by pixel and algorithmically applies some effect in order to create an output image. In Core Image, image processing relies on the[CIFilter]() and[CIImage]() classes, which describe filters and their input and output. To apply filters and display or export results, you can make use of the integration between Core Image and other system frameworks, or create your own rendering workflow with the[CIContext]() class. This chapter covers the key concepts for working with these classes to apply filters and render results.
 
 
-##1、Overview
+## 1、Overview
 
 There are many ways to use Core Image for image processing in your app. Listing 1-1 shows a basic example and provides pointers to further explanations in this chapter.
 
-#####Listing 1-1  The basics of applying a filter to an image on iOS
+##### Listing 1-1  The basics of applying a filter to an image on iOS
 
 ```Objectivc-C
 CIContext *context = [CIContext contextWithOptions:nil];               // 1
@@ -29,7 +29,7 @@ CGImageRef cgImage = [context createCGImage:result fromRect:extent];   // 5
 
 
 
-##2、Images are the Input and Output of Filters
+## 2、Images are the Input and Output of Filters
 
 Core Image filters process and produce Core Image images. A CIImage instance is an immutable object representing an image. These objects don’t directly represent image bitmap data—instead, a CIImage object is a “recipe” for producing an image. One recipe might call for loading an image from a file; another might represent output from a filter, or from a chain of filters. Core Image performs these recipes only when you request that an image be rendered for display or output.
 
@@ -49,7 +49,7 @@ Because a CIImage object describes how to produce an image (instead of containin
 Deferring processing until rendering time makes Core Image fast and efficient. At rendering time, Core Image can see if more than one filter needs to be applied to an image. If so, it automatically concatenates multiple “recipes” and organizes them to eliminate redundant operations, so that each pixel is processed only once rather than many times.
 
 
-##3、Filters Describe Image Processing Effects
+## 3、Filters Describe Image Processing Effects
 
 An instance of the CIFilter class is a mutable object representing an image processing effect and any parameters that control that effect’s behavior. 
 CIFilter 对象是可变的, 一个 CIFilter 对象表示一个图片的显示效果, 每个 CIFilter 参数都会影响图片的显示效果。
@@ -75,7 +75,7 @@ Filter parameters are defined as key-value pairs; to work with parameters, you t
 
 >Important: CIFilter objects are mutable, so you cannot safely share them between different threads. Each thread must create its own CIFilter objects. However, a filter’s input and output CIImage objects are immutable, and thus safe to pass between threads.
 
-###1. Chaining Filters for Complex Effects
+### 1. Chaining Filters for Complex Effects
 
 Every Core Image filter produces an output CIImage object, so you can use this object as input to another filter. For example, the sequence(一系列) of filters illustrated(说明) in Figure 1-1 applies a color effect to an image, then adds a glow effect, and finally crops a section out of the result.
 
@@ -123,7 +123,7 @@ Listing 1-2 also shows a few different convenience methods for configuring filte
 * Apply a filter without creating a CIFilter instance by using the imageByApplyingFilter:withInputParameters: method to a CIImage object. (See the bloomImage example in Listing 1-2.)
 * For certain commonly used filter operations, such as cropping, clamping, and applying coordinate transforms, use other CIImage instance methods listed in Creating an Image by Modifying an Existing Image. (See the croppedImage example in Listing 1-2.)
 
-###2. Using Special Filter Types for More Options
+### 2. Using Special Filter Types for More Options
 
 Most of the built-in Core Image filters operate on a main input image (possibly with additional input images that affect processing) and create a single output image. But there are several additional types of that you can use to create interesting effects or combine with other filters to produce more complex workflows.
 
@@ -152,10 +152,10 @@ For the complete list of reduction filters, query the CICategoryReduction catego
 For the complete list of transition filters, query the CICategoryTransition category.
 
 
-##4、Integrating with Other Frameworks
+## 4、Integrating with Other Frameworks
 Core Image interoperates with several other technologies in iOS, macOS, and tvOS. Thanks to this tight integration, you can use Core Image to easily add visual effects to games, video, or images in your app’s user interface without needing to build complex rendering code. The following sections cover several of the common ways to use Core Image in an app and the conveniences system frameworks provide for each.
 
-###1. Processing Still Images in UIKit and AppKit
+### 1. Processing Still Images in UIKit and AppKit
 
 UIKit and AppKit provide easy ways to add Core Image processing to still images, whether those images appear in your app’s UI or are part of its workflow. For example:
 
@@ -187,7 +187,7 @@ class ViewController: UIViewController {
 ```
 In macOS, use the initWithBitmapImageRep: method to create CIImage objects from bitmap images and the NSCIImageRep class to create images you can use anywhere NSImage objects are supported.
 
-###2. Processing Video with AV Foundation
+### 2. Processing Video with AV Foundation
 The AVFoundation framework provides a number of high level utilities for working with video and audio content. Among these is the AVVideoComposition class, which you can use to combine or edit video and audio tracks into a single presentation. (For general information on compositions, see Editing in AVFoundation Programming Guide.) You can use an AVVideoComposition object to apply Core Image filters to each frame of a video during playback or export, as shown in Listing 1-4.
 
 **Listing 1-4  Applying a filter to a video composition**
@@ -220,7 +220,7 @@ To use the created video composition for playback, create an AVPlayerItem object
 >Tip: Listing 1-4 also shows another useful Core Image technique. By default, a blur filter also softens the edges of an image by blurring image pixels together with the transparent pixels that (in the filter’s image processing space) surround the image. This effect can be undesirable in some circumstances, such as when filtering video.
 To avoid this effect, use the imageByClampingToExtent method (or the CIAffineClamp filter) to extend the edge pixels of the image infinitely in all directions before blurring. Clamping creates an image of infinite size, so you should also crop the image after blurring.
 
-###3. Processing Game Content with SpriteKit and SceneKit
+### 3. Processing Game Content with SpriteKit and SceneKit
 
 SpriteKit is a technology for building 2D games and other types of apps that feature highly dynamic animated content; SceneKit is for working with 3D assets, rendering and animating 3D scenes, and building 3D games. (For more information on each technology, see SpriteKit Programming Guide and SceneKit Framework Reference.) Both frameworks provide high-performance real-time rendering, with easy ways to add Core Image processing to all or part of a scene.
 
@@ -267,11 +267,11 @@ You can also animate filter parameters on a SceneKit node—for details, see the
 
 In both SpriteKit and SceneKit, you can use transitions to change a view’s scene with added visual flair. (See the presentScene:transition: method for SpriteKit and the presentScene:withTransition:incomingPointOfView:completionHandler: method for SceneKit.) Use the SKTransition class and its transitionWithCIFilter:duration: initializer to create a transition animation from any Core Image transition filter.
 
-###4. Processing Core Animation Layers (macOS)
+### 4. Processing Core Animation Layers (macOS)
 In macOS, you can use the filters property to apply filters to the contents of any CALayer-backed view, and add animations that vary filter parameters over time. See Filters Add Visual Effects to OS X Views and Advanced Animation Tricks in Core Animation Programming Guide.
 
 
-##5、Building Your Own Workflow with a Core Image Context
+## 5、Building Your Own Workflow with a Core Image Context
 
 When you apply Core Image filters using the technologies listed in the previous section, those frameworks automatically manage the underlying resources that Core Image uses to process images and render results for display. This approach both maximizes performance for those workflows and makes them easier to set up. However, in some cases it’s more prudent to manage those resources yourself using the CIContext class. By managing a Core Image context directly, you can precisely control your app’s performance characteristics or integrate Core Image with lower-level rendering technologies.
 
@@ -279,14 +279,14 @@ A Core Image context represents the CPU or GPU computing technology, resources, 
 
 >Important: A Core Image context is a heavyweight object managing a large amount of resources and state. Repeatedly creating and destroying contexts has a large performance cost, so if you plan to perform multiple image processing operations, create a context early on and store it for future reuse.
 
-###1. Rendering with an Automatic Context
+### 1. Rendering with an Automatic Context
 If you don’t have constraints on how your app interoperates with other graphics technologies, creating a Core Image context is simple: just use the basic init or initWithOptions: initializer. When you do so, Core Image automatically manages resources internally, choosing the appropriate or best available CPU or GPU rendering technology based on the current device and any options you specify. This approach is well-suited to tasks such as rendering a processed image for output to a file (for example, with the writeJPEGRepresentationOfImage:toURL:colorSpace:options:error: method).
 
 >Note: A context without an explicitly specified rendering destination cannot use the drawImage:inRect:fromRect: method, because that method’s behavior changes depending on the rendering destination in use. Instead, use the CIContext methods whose names begin with render or create to specify an explicit destination.
 
 Take care when using this approach if you intend to render Core Image results in real time—that is, to animate changes in filter parameters, to produce an animated transition effect, or to process video or other visual content that already renders many times per second. Even though a CIContext object created with this approach can automatically render using the GPU, presenting the rendered results may involve expensive copy operations between CPU and GPU memory.
 
-###2. Real-Time Rendering with Metal
+### 2. Real-Time Rendering with Metal
 
 The Metal framework provides low-overhead access to the GPU, enabling high performance for graphics rendering and parallel compute workflows. Such workflows are integral to image processing, so Core Image builds upon Metal wherever possible. If you’re building an app that renders graphics with Metal, or if you want to leverage Metal to get real-time performance for animating filter output or filtering animated input (such as live video), use a Metal device to create your Core Image context.
 
@@ -366,7 +366,7 @@ public func draw(in view: MTKView) {
 
 This example shows only the minimal code needed to render with Core Image using Metal. In a real application, you’d likely perform additional rendering passes before or after the one managed by Core Image, or render Core Image output into a secondary texture and use that texture in another rendering pass. For more information on drawing with Metal, see Metal Programming Guide.
 
-###3. Real-Time Rendering with OpenGL or OpenGL ES
+### 3. Real-Time Rendering with OpenGL or OpenGL ES
 Core Image can also use OpenGL (macOS) or OpenGL ES (iOS and tvOS) for high-performance, GPU-based rendering. Use this option if you need to support older hardware where Metal is not available, or if you want to integrate Core Image into an existing OpenGL or OpenGL ES workflow.
 
 * If you draw using OpenGL ES (in iOS or tvOS), use the contextWithEAGLContext:options: initializer to create a Core Image context from the EAGLContext you use for rendering.
@@ -376,7 +376,7 @@ In either scenario, use the imageWithTexture:size:flipped:colorSpace: initialize
 
 To render Core Image output in OpenGL or OpenGL ES, make your GL context current and set a destination framebuffer, then call the drawImage:inRect:fromRect: method.
 
-###4. CPU-Based Rendering with Quartz 2D
+### 4. CPU-Based Rendering with Quartz 2D
 If your app doesn’t require real-time performance and draws view content using CoreGraphics (for example, in the drawRect: method of a UIKit or AppKit view), use the contextWithCGContext:options: initializer to create a Core Image context that works directly with the Core Graphics context you’re already using for other drawing. (In macOS, use the CIContext property of the current NSGraphicsContext object instead.) For information on CoreGraphics contexts, see Quartz 2D Programming Guide.
 
 

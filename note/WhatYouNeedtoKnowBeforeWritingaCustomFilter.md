@@ -1,8 +1,8 @@
-#What You Need to Know Before Writing a Custom Filter
+# What You Need to Know Before Writing a Custom Filter
 
 Core Image provides support for writing custom filters. A custom filter is one for which you write a routine, called a kernel, that specifies the calculations to perform on each source image pixel. If you plan to use the built-in Core Image filters, either as they are or by subclassing them, you don’t need to read this chapter. If you plan to write a custom filter, you should read this chapter so you understand the processing path and the components in a custom filter. After reading this chapter, you can find out how to write a filter in Creating Custom Filters. If you are interested in packaging your custom filter for distribution, you should also read Packaging and Loading Image Units.
 
-##1、Filter Clients and Filter Creators
+## 1、Filter Clients and Filter Creators
 
 Core Image is designed for two types of developers: filter clients and filter creators. If you plan only to use Core Image filters, you are a filter client. If you plan to write your own filter, you are a filter creator.
 
@@ -29,7 +29,7 @@ Filter creators can make their custom filters available to any app by packaging 
 ![MacDown logo](https://developer.apple.com/library/prerelease/content/documentation/GraphicsImaging/Conceptual/CoreImaging/art/contents_image_unit_2x.png)
 
 
-##2、The Processing Path
+## 2、The Processing Path
 
 Figure 8-3 shows the pixel processing path for a filter that operates on two source images. Source images are always specified as CIImage objects. Core Image provides a variety of ways to get image data. You can supply a URL to an image, read raw image data (using the NSData class), or convert a Quartz 2D image (CGContextRef), an OpenGL texture, or a Core Video image buffer (CVImageBufferRef) to a CIImage object.
 
@@ -71,7 +71,7 @@ Core Image promotes efficient processing in other ways. It performs intelligent 
 
 Core Image also gets great performance by using traditional compilation techniques at the kernel and pass levels. The method Core Image uses to allocate registers minimizes the number of temporary registers (per kernel) and temporary pixel buffers (per filter graph). The compiler performs several optimizations and automatically distinguishes between reading data-dependent textures, which are based on previous calculations, and those that are not data-dependent. Again, you don’t need to concern yourself with the details of the compilation techniques. The important point is that Core Image is hardware savvy; it uses the power of the GPU and multicore CPUs whenever it can, and it does so in smart ways.
 
-##3、Coordinate Spaces
+## 3、Coordinate Spaces
 
 Core Image performs operations in a device-independent working space. The Core Image working space is, in theory, infinite in extent. A point in working space is represented by a coordinate pair (x, y), where x represents the location along the horizontal axis and y represents the location along the vertical axis. Coordinates are floating-point values. By default, the origin is point (0,0).
 
@@ -81,7 +81,7 @@ When you write your own filters, you need to be familiar with two coordinate spa
 
 Keep in mind that if your source data is tiled, the sampler coordinates have an offset (dx/dy). If your sample coordinates have an offset, it may be necessary for you to convert the destination location to the sampler location using the function samplerTransform.
 
-##4、The Region of Interest
+## 4、The Region of Interest
 
 Although not explicitly labeled in Figure 8-4, the shaded area in each of the source images is the region of interest for samplers depicted in the figure. The region of interest, or ROI, defines the area in the source from which a sampler takes pixel information to provide to the kernel for processing. If you are a filter client, you don’t need to concern yourself with the ROI. But if you are a filter creator, you’ll want to understand the relationship between the region of interest and the domain of definition.
 
@@ -97,7 +97,7 @@ Unless otherwise instructed, Core Image assumes that the ROI and the domain of d
 
 See Supplying an ROI Function for more information.
 
-##5、Executable and Nonexecutable Filters
+## 5、Executable and Nonexecutable Filters
 
 You can categorize custom Core Image filters on the basis of whether or not they require an auxiliary binary executable to be loaded into the address space of the client app. As you use the Core Image API, you’ll notice that these are simply referred to as executable and nonexecutable. Filter creators can choose to write either kind of filter. Filter clients can choose to use only nonexecutable or to use both kinds of filters.
 
@@ -105,7 +105,7 @@ Security is the primary motivation for distinguishing CPU executable and CPU non
 
 Nonexecutable filters have special requirements, one of which is that nonexecutable filters must be packaged as part of an image unit. Filter creators can read Writing Nonexecutable Filters for more information. Filter clients can find information on loading each kind of filter in Loading Image Units.
 
-##6、Color Components and Premultiplied Alpha
+## 6、Color Components and Premultiplied Alpha
 
 Premultiplied alpha is a term used to describe a source color, the components of which have already been multiplied by an alpha value. Premultiplying speeds up the rendering of an image by eliminating the need to perform a multiplication operation for each color component. For example, in an RGB color space, rendering an image with premultiplied alpha eliminates three multiplication operations (red times alpha, green times alpha, and blue times alpha) for each pixel in the image.
 
@@ -115,8 +115,8 @@ By default, Core Image assumes that processing nodes are 128 bits-per-pixel, lin
 
 With 8-bit YUV 4:2:2 sources, Core Image can process 240 HD layers per gigabyte. Eight-bit YUV is the native color format for video source such as DV, MPEG, uncompressed D1, and JPEG. You need to convert YUV color spaces to an RGB color space for Core Image.
 
-##7、See Also
+## 7、See Also
 
 Shantzis, Michael A., “A Model for Efficient and Flexible Image Computing,” (1994), Proceedings of the 21st Annual Conference on Computer Graphics and Interactive Techniques.
 
-Smith, Alvy Ray, “Image Compositing Fundamentals,” Memo 4, Microsoft, July 1995. Available from http://alvyray.com/Memos/MemosCG.htm#ImageCompositing
+Smith, Alvy Ray, “Image Compositing Fundamentals,” Memo 4, Microsoft, July 1995. Available from http://alvyray.com/Memos/MemosCG.htm# ImageCompositing

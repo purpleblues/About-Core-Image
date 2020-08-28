@@ -1,4 +1,4 @@
-#Detecting Faces in an Image(面部识别)
+# Detecting Faces in an Image(面部识别)
 
 Core Image can analyze and find human faces in an image. It performs face detection, not recognition. Face detection is the identification of rectangles that contain human face features, whereas face recognition is the identification of specific human faces (John, Mary, and so on). After Core Image detects a face, it can provide information about face features, such as eye and mouth positions. It can also track the position an identified face in a video.
 
@@ -14,7 +14,7 @@ Knowing where the faces are in an image lets you perform other operations, such 
 >Note: Face detection is available in iOS v5.0 and later and in OS X v10.7 and later.
 
 
-##1、Detecting Faces
+## 1、Detecting Faces
 
 Use the CIDetector class to find faces in an image as shown in Listing 2-1.
 
@@ -42,7 +42,7 @@ Here’s what the code does:
 
 After you get an array of faces, you’ll probably want to find out their characteristics, such as where the eyes and mouth are located. The next sections describes how.
 
-##2、Getting Face and Face Feature Bounds
+## 2、Getting Face and Face Feature Bounds
 
 Face features include:
 

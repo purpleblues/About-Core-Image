@@ -1,10 +1,10 @@
-#Auto Enhancing Images
+# Auto Enhancing Images
 
 The auto enhancement feature of Core Image analyzes an image for its histogram, face region contents, and metadata properties. It then returns an array of CIFilter objects whose input parameters are already set to values that will improve the analyzed image.
 
 Auto enhancement is available in iOS v5.0 and later and in OS X v10.8 and later.
 
-##1、Auto Enhancement Filters
+## 1、Auto Enhancement Filters
 
 Table 3-1 shows the filters Core Image uses for automatically enhancing images. These filters remedy some of the most common issues found in photos.
 
@@ -19,7 +19,7 @@ Table 3-1 shows the filters Core Image uses for automatically enhancing images. 
 | CIHighlightShadowAdjust	 | Adjusts shadow details |
 
 
-##2、Using Auto Enhancement Filters
+## 2、Using Auto Enhancement Filters
 
 The auto enhancement API has only two methods: autoAdjustmentFilters and autoAdjustmentFiltersWithOptions:. In most cases, you’ll want to use the method that provides an options dictionary.
 

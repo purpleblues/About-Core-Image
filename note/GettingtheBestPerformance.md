@@ -1,4 +1,4 @@
-#Getting the Best Performance
+# Getting the Best Performance
 
 Core Image provides many options for creating images, contexts, and rendering content. How you choose to accomplish a task depends on:
 
@@ -9,7 +9,7 @@ Core Image provides many options for creating images, contexts, and rendering co
 
 You should read over the performance best practices to ensure your app runs as efficiently as possible.
 
-##1、Performance Best Practices
+## 1、Performance Best Practices
 
 Follow these practices for best performance:
 
@@ -44,7 +44,7 @@ options = @{ (id)kCVPixelBufferPixelFormatTypeKey :
     @(kCVPixelFormatType_420YpCbCr88iPlanarFullRange) };
 ```
 
-##2、Does Your App Need Color Management?
+## 2、Does Your App Need Color Management?
 
 By default, Core Image applies all filters in light-linear color space. This provides the most accurate and consistent results.
 

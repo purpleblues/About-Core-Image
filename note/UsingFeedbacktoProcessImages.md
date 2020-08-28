@@ -1,4 +1,4 @@
-#Using Feedback to Process Images
+# Using Feedback to Process Images
 
 The CIImageAccumulator class is ideally suited for feedback-based processing. As it’s name suggests, it accumulates image data over time. This chapter shows how to use a CIImageAccumulator object to implement a simple painting app called MicroPaint that allows users to paint on a canvas to create images similar to that shown in Figure 7-1.
 
@@ -17,7 +17,7 @@ The essential tasks for creating setting up an image accumulator for the MicroPa
 
 This chapter describes only the code that is essential to creating an image accumulator and supporting drawing to it. The methods for drawing to the view and for handling view size changes aren’t discussed here. For that, see CIMicroPaint, which is a complete sample code project that you can download and examine in more detail. CIMicroPaint has several interesting details. It shows how to draw to an OpenGL view and to maintain backward compatibility for previous versions of OS X.
 
-##1、Set Up the Interface for the MicroPaint App
+## 1、Set Up the Interface for the MicroPaint App
 
 The interface to MicroPaint needs the following:
 
@@ -42,7 +42,7 @@ Building a Dictionary of Filters declares MircoPaintView as a subclass of Sample
 ```
 
 
-##2、Initialize Filters and Default Values for Painting
+## 2、Initialize Filters and Default Values for Painting
 
 When you initialize the MicroPaint app (as shown in Listing 7-2), you need to create the brush and composite filters, and set the initial brush size and paint color. The code in Listing 7-2 is created and initialized to transparent black with an input radius of 0. When the user drags the cursor, the brush filter takes on the current values for brush size and color.
 
@@ -58,7 +58,7 @@ When you initialize the MicroPaint app (as shown in Listing 7-2), you need to cr
     color = [NSColor colorWithDeviceRed: 0.0 green: 0.0 blue: 0.0 alpha: 1.0];
 ```
 
-##3、Track and Accumulate Painting Operations
+## 3、Track and Accumulate Painting Operations
 
 The mouseDragged: method is called whenever the user either clicks or drags the cursor over the canvas. It updates the brush and compositing filter values and adds new painting operations to the accumulated image.
 

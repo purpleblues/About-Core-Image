@@ -1,4 +1,4 @@
-#Packaging and Loading Image Units
+# Packaging and Loading Image Units
 
 An image unit represents the plug-in architecture for Core Image filters. Image units use the NSBundle class as the packaging mechanism to allow you to make the filters that you create available to other apps. An image unit can contain filters that are executable or nonexecutable. (See Executable and Nonexecutable Filters for details.)
 
@@ -16,7 +16,7 @@ After reading this chapter, you may also want to
 * Read Image Unit Tutorial for in-depth information on writing kernels and creating image units.
 * Visit Apple’s Image Units Licensing and Trademarks webpage to find out how to validate image units and obtain the Image Unit logo.
 
-##1、Before You Get Started
+## 1、Before You Get Started
 
 Download the CIDemoImageUnit sample. When you create an image unit, you should have similar files. This image unit contains one filter, FunHouseMirror. Each filter in an image unit typically has three files: an interface file for the filter class, the associated implementation file, and a kernel file. As you can see in sample code project, this is true for the FunHouseMirror filter: FunHouseMirrorFilter.h, FunHouseMirrorFilter.m, and funHouseMirror.cikernel.
 
@@ -24,7 +24,7 @@ Each image unit should also have interface and implementation files for the CIPl
 
 Now that you know a bit about the files in an image unit project, you’re ready to create one.
 
-##2、Create an Image Unit Project in Xcode
+## 2、Create an Image Unit Project in Xcode
 
 Xcode provides a template for creating image units. After you create an image unit project, you’ll have most of the files you need to get started and the project will be linked to the appropriate frameworks.
 
@@ -43,7 +43,7 @@ Launch Xcode and choose File > New Project.
 
 The MyImageUnitKernelFilter.cikernel file provided in the image unit project is a sample kernel file. If you’ve already created a filter you won’t need this file, so you can delete it. You’ll add your own to the project in just a moment.
 
-##3、Customize the Load Method
+## 3、Customize the Load Method
 
 Open the file that implements the CIPlugInRegistration protocol. In it you’ll find a load method, as shown in Listing 10-1. You have the option to add code to this method to perform any initialization that’s needed, such as a registration check. The method returns true if the filter is loaded successfully. If you don’t need any custom initialization, you can leave the load method as it is.
 
@@ -59,13 +59,13 @@ Open the file that implements the CIPlugInRegistration protocol. In it you’ll 
 
 If you want, you can write an unload method to perform any cleanup tasks that might be required by your filter.
 
-##3、Add Your Filter Files to the Project
+## 3、Add Your Filter Files to the Project
 
 Add the filter files you created previously to the image unit project. Recall that you’ll need the interface and implementation files for each filter and the associated kernel file. If you haven’t written the filter yet, see Creating Custom Filters.
 
 Keep in mind that you can package more than one filter in an image unit, and you can have as many kernel files as needed for your filters. Just make sure that you include all of the filter and kernel files that you want to package.
 
-##4、Modify the Description Property List
+## 4、Modify the Description Property List
 
 For executable filters, only the version number, filter class, and filter name are read from the Description.plist file. You provide a list of attributes for the filter in your code (see Write a Custom Attributes Method). You need to check the Description.plist file provided in the image unit template to make sure the filter name is correct and to enter the version number.
 
@@ -107,7 +107,7 @@ An NSString object that describes either the relative path of the image to the b
 All scalar types
 An NSNumber value.
 
-##4、Build and Test the Image Unit
+## 4、Build and Test the Image Unit
 
 Before you start creating an image unit, you should test the kernel code to make sure that it works properly. (See Use Quartz Composer to Test the Kernel Routine.) After you successfully build the image unit, you’ll want to copy it to the following directories:
 
@@ -115,7 +115,7 @@ Before you start creating an image unit, you should test the kernel code to make
 ~/Library/Graphics/Image Units
 Then, you should try loading the image unit from an app and using the filter (or filters) that are packaged in the unit. See Loading Image Units, Querying the System for Filters, and Processing Images.
 
-##5、Loading Image Units
+## 5、Loading Image Units
 
 The built-in filters supplied by Apple are loaded automatically. The only filters you need to load are third-party filters packaged as image units. An image unit, which is simply a bundle, can contain one or more image processing filters. If the image unit is installed in one of the locations discussed in Build and Test the Image Unit, then it can be used by any app\ that calls one of the load methods provided by the CIPlugin class and shown in Table 10-3. You need to load image units only once. For example, to load all globally installed image units, you could add the following line of code to an initialization routine in your app.
 
@@ -132,7 +132,7 @@ Scans image unit directories (/Library/Graphics/Image Units and ~/Library/Graphi
 loadPlugIn:allowNonExecutable:
 Loads the image unit at the location specified by the url argument. Pass true for the allowNonExecutable argument if you want to load only the kernels of the image unit without executing any of the image unit code.
 
-##5、See Also
+## 5、See Also
 
 Image Unit Tutorial which provides step-by-step instructions for writing a variety of kernels and packaging them as image units.
 CIDemoImageUnit is a sample image unit Xcode project.

@@ -1,10 +1,10 @@
-#Subclassing CIFilter: Recipes for Custom Effects
+# Subclassing CIFilter: Recipes for Custom Effects
 
 You can create custom effects by using the output of one image filter as the input of another, chaining as many filters together as you’d like. When you create an effect this way that you want to use multiple times, consider subclassing CIFilter to encapsulate the effect as a filter.
 
 This chapter shows how Core Image subclasses CIFilter to create the CIColorInvert filter. Then it describes recipes for chaining together a variety of filters to achieve interesting effects. By following the subclassing procedure in Subclassing CIFilter to Create the CIColorInvert Filter, you should be able to create filters from the recipes in this chapter or venture forth to create your own interesting combinations of the built-in filters provided by Core Image.
 
-##1、Subclassing CIFilter to Create the CIColorInvert Filter
+## 1、Subclassing CIFilter to Create the CIColorInvert Filter
 
 When you subclass CIFilter you can modify existing filters by coding them with preset values or by chaining them together. Core Image implements some of its built-in filters using this technique.
 
@@ -45,7 +45,7 @@ The CIColorInvert filter provided by Core Image is a variation on the CIColorMat
 }
 ```
 
-##2、Chroma Key Filter Recipe
+## 2、Chroma Key Filter Recipe
 
 Removes a color or range of colors from a source image and then composites the source image with a background image.
 
@@ -61,7 +61,7 @@ To create a chroma key filter:
 
 The sections that follow show how to perform each step.
 
-###1. Create a Cube Map
+### 1. Create a Cube Map
 A color cube is a 3D color lookup table. The Core Image filter CIColorCube takes color values as input and applies a lookup table to the values. The default lookup table for CIColorCube is an identity matrix—meaning that is does nothing to its supplied data. However, this recipe requires that you remove all green from the image. (You can remove a different color if you’d like.)
 
 You need to remove all the green from the image by setting green to alpha = 0.0, which makes it transparent. “Green” encompasses a range of colors. The most straightforward way to proceed is to convert the color values in the image from RGBA to HSV values. In HSV, hue is represented as an angle around the central axis of a cylinder. In that representation, you can visualize color as a pie slice and then simply remove the slice that represents the chroma-key color.
@@ -111,7 +111,7 @@ CIColorCube *colorCube = [CIFilter filterWithName:@"CIColorCube"];
 [colorCube setValue:data forKey:@"inputCubeData"];
 ```
 
-###2. Remove green from the source image
+### 2. Remove green from the source image
 Now that you have the color map data, supply the foreground image—the one you want the green removed from—to the CIColorCube filter and get the output image.
 
 ```
@@ -126,7 +126,7 @@ Set the input parameters of the CISourceOverCompositing filter as follows:
 * Set inputBackgroundImage to the image that shows the new background. This example uses a beach image.
 The foreground image now appears as if it is on the beach.
 
-##3、White Vignette for Faces Filter Recipe
+## 3、White Vignette for Faces Filter Recipe
 
 Increases the brightness of an image at the periphery of a face detected in an image.
 
@@ -141,7 +141,7 @@ To create a white vignette filter:
 * Blend the base shade map with the original image.
 The sections that follow show how to perform each step.
 
-###1. Find the Face
+### 1. Find the Face
 Use the CIDetector class to locate a face in an image. The first item in the array that featuresInImage:options: returns is the face the filter operates on. After you have the face, calculate the center of the face from the bounds provided by the detector. You need the center value to create the shade map. Listing 5-4 shows how to locate a face using CIDetector.
 
 **Listing 5-4  Using CIDetector to locate one face**
@@ -158,7 +158,7 @@ CIVector *center = [CIVector vectorWithX:xCenter Y:yCenter];
 ```
 
 
-###2. Create a Shade Map
+### 2. Create a Shade Map
 Use the CIRadialGradient filter to create a shade map centered on the face. The center of the shade map should be transparent so that the face in the image remains untouched. The edges of the map should be opaque white. Areas in between should have varying degrees of transparency.
 
 To achieve this effect, set the input parameters to CIRadialGradient as follows:
@@ -169,13 +169,13 @@ To achieve this effect, set the input parameters to CIRadialGradient as follows:
 * Set inputColor1 to transparent white.
 * Set the inputCenter to the center of the face bounds that you computed with Listing 5-4.
 
-###3. Blend the Gradient with the Face
+### 3. Blend the Gradient with the Face
 Set the input parameters of the CISourceOverCompositing filter as follows:
 
 * Set inputImage to the original image.
 * Set inputBackgroundImage to the shade map produced in the last step.
 
-##3、Tilt-Shift Filter Recipe
+## 3、Tilt-Shift Filter Recipe
 
 Selectively focuses an image to simulate a miniature scene.
 
@@ -191,14 +191,14 @@ To create a tilt-shift filter :
 * Composite the blurred image, the mask, and the original image.
 The sections that follow show how to perform each step.
 
-###1. Create a Blurred Version of the image
+### 1. Create a Blurred Version of the image
 
 Set the input parameters of the CIGaussianBlur filter as follows:
 
 * Set inputImage to the image you want to process.
 * Set inputRadius to 10.0 (which is the default value).
 
-###2. Create Two Linear Gradients
+### 2. Create Two Linear Gradients
 Create a linear gradient from a single color (such as green or gray) that varies from top to bottom. Set the input parameters of CILinearGradient as follows:
 
 * Set inputPoint0 to (0, 0.75 * h)
@@ -212,13 +212,13 @@ Create a green linear gradient that varies from bottom to top. Set the input par
 * Set inputPoint1 to (0, 0.5*h)
 * Set inputColor1 to (0,1,0,0)
 
-###3. Create a Mask from the Linear Gradients
+### 3. Create a Mask from the Linear Gradients
 To create a mask, set the input parameters of the CIAdditionCompositing filter as follows:
 
 * Set inputImage to the first linear gradient you created.
 * Set inputBackgroundImage to the second linear gradient you created.
 
-###4. Combine the Blurred Image, Source Image, and the Gradients
+### 4. Combine the Blurred Image, Source Image, and the Gradients
 The final step is to use the CIBlendWithMask filter, setting the input parameters as follows:
 
 * Set inputImage to the blurred version of the image.
@@ -227,7 +227,7 @@ The final step is to use the CIBlendWithMask filter, setting the input parameter
 
 The mask will affect only the outer portion of an image. The transparent portions of the mask will show through the original, unprocessed image. The opaque portions of the mask allow the blurred image to show.
 
-##4、Anonymous Faces Filter Recipe
+## 4、Anonymous Faces Filter Recipe
 
 Finds faces in an image and pixellates them so they can’t be recognized.
 
@@ -242,13 +242,13 @@ To create an anonymous faces filter:
 * Blend the pixellated image with the original image using the mask.
 The sections that follow show how to perform each step.
 
-###1. Create a Pixellated version of the image
+### 1. Create a Pixellated version of the image
 Set the input parameters of the CIPixellate filter as follows:
 
 * Set inputImage to the image that contains the faces.
 * Set inputScale to max(width, height)/60 or another value that seems pleasing to you, where width and height refer to the image’s width and height.
 
-###2. Build a Mask From the Faces Detected in the Image
+### 2. Build a Mask From the Faces Detected in the Image
 Use the CIDetector class for find the faces in the image. For each face:
 
 * Use the CIRadialGradient filter to create a circle that surrounds the face.
@@ -288,14 +288,14 @@ for (CIFeature *f in faceArray) {
 }
 ```
 
-###3. Blend the Pixellated Image, the Mask, and the Original Image
+### 3. Blend the Pixellated Image, the Mask, and the Original Image
 Set the input parameters of the CIBlendWithMask filter to the following:
 
 * Set inputImage to the pixellated version of the image.
 * Set inputBackgroundImage to the original image.
 * Set inputMaskImage to to the composited green circles.
 
-##4、Pixellate Transition Filter Recipe
+## 4、Pixellate Transition Filter Recipe
 
 Transitions from one image to another by pixelating each image.
 
@@ -310,21 +310,21 @@ To create a pixellate-transition filter:
 
 The sections that follow show how to perform each step.
 
-###1. Create a Dissolve Transition
+### 1. Create a Dissolve Transition
 Set the input parameters of the CIDissolveTransition filter as follows:
 
 * Set inputImage to the image from which you want to transition.
 * Set inputTagetImage to the image to which you want to transition.
 * Set inputTime to a value similar to min(max(2*(time - 0.25), 0), 1), which is a ramp function that’s clamped between two values.
 
-###2. Pixellate the Result of the Transition
+### 2. Pixellate the Result of the Transition
 Set the CIPixellate filter to vary the scale of the pixels over time by setting its input parameters as:
 
 * Set inputImage to the output image from the CIDissolveTransition filter.
 * Set inputScale to change over time by supplying values from a triangle function: 90*(1 - 2*abs(time - 0.5))
 * Use the default value for inputCenter.
 
-##5、Old Film Filter Recipe
+## 5、Old Film Filter Recipe
 
 Decreases the quality of a video image to make it look like an old, scratchy analog film.
 
@@ -340,13 +340,13 @@ To create an old-film filter:
 * Composite the specks and scratches onto the sepia-toned image.
 The sections that follow show how to perform each step.
 
-###1. Apply Sepia to the Video Image
+### 1. Apply Sepia to the Video Image
 Set the input parameters of the CISepiaTone as follows:
 
 * Set inputImage to the video image to apply the effect to.
 * Set inputIntensity to 1.0.
 
-###2. Create Randomly Varying White Specks
+### 2. Create Randomly Varying White Specks
 Use the CIRandomGenerator filter, which produces colored noise. It does not have any input parameters.
 
 To process the noise so that you get only white specks, use the CIColorMatrix filter with the input parameters set as follows:
@@ -360,7 +360,7 @@ Use the CISourceOverCompositing filter to blend the specks with the video image 
 * Set inputImage to the white-specks image produced by the CIColorMatrix filter.
 * Set inputBackgroundImage to the image produced by the CISepiaTone filter.
 
-###3. Create Randomly Varying Dark Scratches
+### 3. Create Randomly Varying Dark Scratches
 Use the CIRandomGenerator filter again to generate colored noise. Then process its output using the CIAffineTransform filter with these input parameters:
 
 * Set inputImage to the noise generated by the CIRandomGenerator filter.
@@ -379,7 +379,7 @@ This results in cyan-colored scratches.
 
 To make the scratches dark, apply the CIMinimumComponent filter to the cyan-colored scratches. This filter uses the minimum value of the r,g,b, values to produce a grayscale image.
 
-###4. Composite the Specks and Scratches to the Sepia Video Image
+### 4. Composite the Specks and Scratches to the Sepia Video Image
 Set the input parameters of the CIMultiplyCompositing filter as follows:
 
 * SetinputBackgroundImage to the processed video image (sepia tone, white specks).
